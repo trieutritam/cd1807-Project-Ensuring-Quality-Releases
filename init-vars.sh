@@ -20,5 +20,3 @@ storage_account_res=${storage_account_res/ACCOUNT_KEY=/}
 
 
 export ARM_ACCESS_KEY=$storage_account_res
-
-env | grep TF_VAR
