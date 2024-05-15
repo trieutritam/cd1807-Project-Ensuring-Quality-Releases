@@ -29,12 +29,10 @@ stages:
             inputs:
               terraformVersion: "1.8.3"
 
-          # Run Terraform Init on the pipeline agent
-          # ToDo: Replace the resource group name, storage account name, and container name below
-          - task: TerraformTaskV3@3
-            displayName: "Terrafom init"
+          - task: TerraformCLI@1
+            displayName: "terraform init"
             inputs:
-              provider: "azurerm"
+              backendType: azurerm
               command: "init"
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               backendServiceArm: "$(azureServiceConnectionId)"
@@ -43,29 +41,24 @@ stages:
               backendAzureRmContainerName: "tfstate"
               backendAzureRmKey: "test.terraform.tfstate"
 
-          # Run Terraform Validate
-          - task: TerraformTaskV3@3
-            displayName: Terraform validate
+          - task: TerraformCLI@1
+            displayName: "terraform validate"
             inputs:
-              provider: "azurerm"
+              backendType: azurerm
               command: "validate"
 
-          # Run Terraform Apply
-          # ToDo: Change the workingDirectory path, as applicable to you
-          - task: TerraformTaskV3@3
-            displayName: Terraform apply
+          - task: TerraformCLI@1
+            displayName: "terraform apply"
             inputs:
-              provider: "azurerm"
+              backendType: azurerm
               command: "apply"
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
 
-          # Destroy the resources in Azure
-          # ToDo: Change the workingDirectory path, as applicable to you
-          - task: TerraformTaskV3@3
-            displayName: Terraform destroy
+          - task: TerraformCLI@1
+            displayName: "terraform destroy"
             inputs:
-              provider: "azurerm"
+              backendType: azurerm
               command: "destroy"
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
