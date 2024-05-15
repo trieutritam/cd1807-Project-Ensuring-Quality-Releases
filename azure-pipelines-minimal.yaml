@@ -24,6 +24,7 @@ stages:
     jobs:
       - job: ENVPrint
         steps:
+          - script: echo $(TF_VAR_azure_devops_pat)
           - script: |
               echo $TF_VAR_subscription_id
               echo $TF_VAR_client_id
