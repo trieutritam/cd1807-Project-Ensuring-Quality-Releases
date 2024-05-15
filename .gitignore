@@ -23,3 +23,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+labinfo.txt
+cmd.sh
+.terraform.lock.hcl

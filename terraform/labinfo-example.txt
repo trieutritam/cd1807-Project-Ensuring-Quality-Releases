@@ -1,0 +1,14 @@
+Subscription Id	
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Tenant Id (Directory Id)	
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Application Id	
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Secret Key	
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Display Name	
+https://xxxxxxxxxxxxxxxxxxx
+Application ID URI	
+https://xxxxxxxxxxxxxxxxxxxxx
+Tenant Domain Name	
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
