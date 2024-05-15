@@ -23,69 +23,65 @@ variables:
     value: "test"
 
 stages:
-  - stage: env
-    jobs:
-      - job: ENVPrint
-        steps:
-          # - script: echo '$(TF_VAR_azure_devops_pat)'
-          - script: |
-              echo $TF_VAR_subscription_id
-              echo $TF_VAR_client_id
-              echo $TF_VAR_client_secret
-              echo $TF_VAR_tenant_id
-              echo $TF_VAR_azure_devops_pat
-            env:
-              TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-              TF_VAR_client_id: $(TF_VAR_client_id)
-              TF_VAR_client_secret: $(TF_VAR_client_secret)
-              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
-          - script: env | sort
+  # - stage: env
+  #   jobs:
+  #     - job: ENVPrint
+  #       steps:
+  #         # - script: echo '$(TF_VAR_azure_devops_pat)'
+  #         - script: |
+  #             echo $TF_VAR_subscription_id
+  #             echo $TF_VAR_client_id
+  #             echo $TF_VAR_client_secret
+  #             echo $TF_VAR_tenant_id
+  #             echo $TF_VAR_azure_devops_pat
+  #           env:
+  #             TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
+  #             TF_VAR_client_id: $(TF_VAR_client_id)
+  #             TF_VAR_client_secret: $(TF_VAR_client_secret)
+  #             TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+  #             TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+  #         - script: env | sort
+
   - stage: Build
     jobs:
       - job: BuildInfrastructure
         steps:
-          - script: env | sort
-  # - stage: Build
-  #   jobs:
-  #     - job: BuildInfrastructure
-  #       steps:
-  #         # Install Terraform on the pipeline agent
-  #         - task: TerraformInstaller@1
-  #           displayName: "Terrafom installation"
-  #           inputs:
-  #             terraformVersion: "1.8.3"
+          # Install Terraform on the pipeline agent
+          - task: TerraformInstaller@1
+            displayName: "Terrafom installation"
+            inputs:
+              terraformVersion: "1.8.3"
 
-  #         - task: TerraformCLI@1
-  #           displayName: "terraform init"
-  #           inputs:
-  #             backendType: azurerm
-  #             command: "init"
-  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-  #             backendServiceArm: "$(azureServiceConnectionId)"
-  #             backendAzureRmResourceGroupName: "Azuredevops"
-  #             backendAzureRmStorageAccountName: "tfstate070119820513"
-  #             backendAzureRmContainerName: "tfstate"
-  #             backendAzureRmKey: "test.terraform.tfstate"
+          - task: TerraformCLI@1
+            displayName: "terraform init"
+            inputs:
+              backendType: azurerm
+              command: "init"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+              backendServiceArm: "$(azureServiceConnectionId)"
+              backendAzureRmResourceGroupName: "Azuredevops"
+              backendAzureRmStorageAccountName: "tfstate070119820513"
+              backendAzureRmContainerName: "tfstate"
+              backendAzureRmKey: "test.terraform.tfstate"
 
-  #         - task: TerraformCLI@1
-  #           displayName: "terraform validate"
-  #           inputs:
-  #             backendType: azurerm
-  #             command: "validate"
+          - task: TerraformCLI@1
+            displayName: "terraform validate"
+            inputs:
+              backendType: azurerm
+              command: "validate"
 
-  #         - task: TerraformCLI@1
-  #           displayName: "terraform apply"
-  #           inputs:
-  #             backendType: azurerm
-  #             command: "apply"
-  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-  #             environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+          - task: TerraformCLI@1
+            displayName: "terraform apply"
+            inputs:
+              backendType: azurerm
+              command: "apply"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
 
-  #         - task: TerraformCLI@1
-  #           displayName: "terraform destroy"
-  #           inputs:
-  #             backendType: azurerm
-  #             command: "destroy"
-  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-  #             environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+          - task: TerraformCLI@1
+            displayName: "terraform destroy"
+            inputs:
+              backendType: azurerm
+              command: "destroy"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
