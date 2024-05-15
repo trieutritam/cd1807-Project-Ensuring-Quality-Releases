@@ -11,6 +11,7 @@ trigger:
 pool: myAgentPool
 
 variables:
+  group: PipelineEnv
   # ToDo: Replace the service connection name as used in the DevOps project settings
   azureServiceConnectionId: "myServiceConnection"
   # Project root folder. Point to the folder containing manage.py file.
@@ -19,46 +20,64 @@ variables:
   environmentName: "test"
 
 stages:
-  - stage: Build
+  - stage: env
     jobs:
-      - job: BuildInfrastructure
+      - job: ENV Print
         steps:
-          # Install Terraform on the pipeline agent
-          - task: TerraformInstaller@1
-            displayName: "Terrafom installation"
-            inputs:
-              terraformVersion: "1.8.3"
+          - script: |
+              echo $TF_VAR_subscription_id
+              echo $TF_VAR_client_id
+              echo $TF_VAR_client_secret
+              echo $TF_VAR_tenant_id
+              echo $TF_VAR_azure_devops_pat
+            env:
+              TF_VAR_subscription_id: $(TF_VAR_subscription_id)
+              TF_VAR_client_id: $(TF_VAR_client_id)
+              TF_VAR_client_secret: $(TF_VAR_client_secret)
+              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+          - script: env | sort
 
-          - task: TerraformCLI@1
-            displayName: "terraform init"
-            inputs:
-              backendType: azurerm
-              command: "init"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              backendServiceArm: "$(azureServiceConnectionId)"
-              backendAzureRmResourceGroupName: "Azuredevops"
-              backendAzureRmStorageAccountName: "tfstate070119820513"
-              backendAzureRmContainerName: "tfstate"
-              backendAzureRmKey: "test.terraform.tfstate"
+  # - stage: Build
+  #   jobs:
+  #     - job: BuildInfrastructure
+  #       steps:
+  #         # Install Terraform on the pipeline agent
+  #         - task: TerraformInstaller@1
+  #           displayName: "Terrafom installation"
+  #           inputs:
+  #             terraformVersion: "1.8.3"
 
-          - task: TerraformCLI@1
-            displayName: "terraform validate"
-            inputs:
-              backendType: azurerm
-              command: "validate"
+  #         - task: TerraformCLI@1
+  #           displayName: "terraform init"
+  #           inputs:
+  #             backendType: azurerm
+  #             command: "init"
+  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+  #             backendServiceArm: "$(azureServiceConnectionId)"
+  #             backendAzureRmResourceGroupName: "Azuredevops"
+  #             backendAzureRmStorageAccountName: "tfstate070119820513"
+  #             backendAzureRmContainerName: "tfstate"
+  #             backendAzureRmKey: "test.terraform.tfstate"
 
-          - task: TerraformCLI@1
-            displayName: "terraform apply"
-            inputs:
-              backendType: azurerm
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+  #         - task: TerraformCLI@1
+  #           displayName: "terraform validate"
+  #           inputs:
+  #             backendType: azurerm
+  #             command: "validate"
 
-          - task: TerraformCLI@1
-            displayName: "terraform destroy"
-            inputs:
-              backendType: azurerm
-              command: "destroy"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+  #         - task: TerraformCLI@1
+  #           displayName: "terraform apply"
+  #           inputs:
+  #             backendType: azurerm
+  #             command: "apply"
+  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+  #             environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+
+  #         - task: TerraformCLI@1
+  #           displayName: "terraform destroy"
+  #           inputs:
+  #             backendType: azurerm
+  #             command: "destroy"
+  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+  #             environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
