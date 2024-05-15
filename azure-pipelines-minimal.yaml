@@ -31,7 +31,7 @@ stages:
 
           # Run Terraform Init on the pipeline agent
           # ToDo: Replace the resource group name, storage account name, and container name below
-          - task: TerraformInstaller@1
+          - task: TerraformTaskV3@3
             displayName: "Terrafom init"
             inputs:
               provider: "azurerm"
@@ -39,12 +39,12 @@ stages:
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               backendServiceArm: "$(azureServiceConnectionId)"
               backendAzureRmResourceGroupName: "Azuredevops"
-              backendAzureRmStorageAccountName: "tfstate281845088"
+              backendAzureRmStorageAccountName: "tfstate070119820513"
               backendAzureRmContainerName: "tfstate"
               backendAzureRmKey: "test.terraform.tfstate"
 
           # Run Terraform Validate
-          - task: TerraformInstaller@1
+          - task: TerraformTaskV3@3
             displayName: Terraform validate
             inputs:
               provider: "azurerm"
@@ -52,7 +52,7 @@ stages:
 
           # Run Terraform Apply
           # ToDo: Change the workingDirectory path, as applicable to you
-          - task: TerraformInstaller@1
+          - task: TerraformTaskV3@3
             displayName: Terraform apply
             inputs:
               provider: "azurerm"
@@ -62,7 +62,7 @@ stages:
 
           # Destroy the resources in Azure
           # ToDo: Change the workingDirectory path, as applicable to you
-          - task: TerraformInstaller@1
+          - task: TerraformTaskV3@3
             displayName: Terraform destroy
             inputs:
               provider: "azurerm"

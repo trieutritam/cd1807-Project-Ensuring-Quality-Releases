@@ -55,6 +55,8 @@ if [[ -n "$IP_ADDRESS" ]]; then
     pip install pylint==2.13.7
     pip show --files pylint
     echo $PATH
+
+    sudo snap install terraform --classic
 ENDSSH
 
 fi
