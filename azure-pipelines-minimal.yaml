@@ -22,7 +22,7 @@ variables:
 stages:
   - stage: env
     jobs:
-      - job: ENV Print
+      - job: ENVPrint
         steps:
           - script: |
               echo $TF_VAR_subscription_id
