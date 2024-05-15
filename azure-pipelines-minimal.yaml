@@ -11,13 +11,13 @@ trigger:
 pool: myAgentPool
 
 variables:
-  group: PipelineEnv
+  - group: PipelineEnv
   # ToDo: Replace the service connection name as used in the DevOps project settings
-  azureServiceConnectionId: "myServiceConnection"
+  - azureServiceConnectionId: "myServiceConnection"
   # Project root folder. Point to the folder containing manage.py file.
-  projectRoot: $(System.DefaultWorkingDirectory)
+  - projectRoot: $(System.DefaultWorkingDirectory)
   # Environment name
-  environmentName: "test"
+  - environmentName: "test"
 
 stages:
   - stage: env
