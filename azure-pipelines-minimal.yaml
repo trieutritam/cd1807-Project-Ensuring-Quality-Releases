@@ -23,43 +23,45 @@ variables:
     value: "test"
 
 stages:
-  # - stage: env
-  #   jobs:
-  #     - job: ENVPrint
-  #       steps:
-  #         # - script: echo '$(TF_VAR_azure_devops_pat)'
-  #         - script: |
-  #             echo $TF_VAR_subscription_id
-  #             echo $TF_VAR_client_id
-  #             echo $TF_VAR_client_secret
-  #             echo $TF_VAR_tenant_id
-  #             echo $TF_VAR_azure_devops_pat
-  #           env:
-  #             TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-  #             TF_VAR_client_id: $(TF_VAR_client_id)
-  #             TF_VAR_client_secret: $(TF_VAR_client_secret)
-  #             TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-  #             TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
-  #         - script: env | sort
-
   - stage: Build
     jobs:
       - job: BuildInfrastructure
         steps:
-          - script: |
-              echo $TF_VAR_subscription_id
-              echo $TF_VAR_client_id
-              echo $TF_VAR_client_secret
-              echo $TF_VAR_tenant_id
-              echo $TF_VAR_azure_devops_pat
-            env:
-              TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-              TF_VAR_client_id: $(TF_VAR_client_id)
-              TF_VAR_client_secret: $(TF_VAR_client_secret)
-              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+          # - script: |
+          #     echo $TF_VAR_subscription_id
+          #     echo $TF_VAR_client_id
+          #     echo $TF_VAR_client_secret
+          #     echo $TF_VAR_tenant_id
+          #     echo $TF_VAR_azure_devops_pat
+          #   env:
+          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
+          #     TF_VAR_client_id: $(TF_VAR_client_id)
+          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
+          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
           
-          - script: env | sort
+          # - script: env | sort
+
+          - task: DownloadSecureFile@1
+            name: id_rsa
+            displayName: 'Download RSA key'
+            inputs:
+              secureFile: 'id_rsa'
+
+          - task: DownloadSecureFile@1
+            name: id_rsa_pub
+            displayName: 'Download RSA key'
+            inputs:
+              secureFile: 'id_rsa.pub'
+
+          - script: |
+              echo Installing $(id_rsa.secureFilePath) to the ssh...
+              sudo cp ~/.ssh/id_rsa $(id_rsa.secureFilePath)
+              echo Installing $(id_rsa_pub.secureFilePath) to the ssh...
+              sudo cp ~/.ssh/id_rsa.pub $(id_rsa_pub.secureFilePath)
+              sudo chmod 600 ~/.ssh/id_rsa
+              sudo chmod 600 ~/.ssh/id_rsa.pub    
+
 
           # Install Terraform on the pipeline agent
           - task: TerraformInstaller@1
@@ -105,16 +107,16 @@ stages:
               TF_VAR_tenant_id: $(TF_VAR_tenant_id)
               TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
-          - task: TerraformCLI@1
-            displayName: "terraform destroy"
-            inputs:
-              backendType: azurerm
-              command: "destroy"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
-            env:
-              TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-              TF_VAR_client_id: $(TF_VAR_client_id)
-              TF_VAR_client_secret: $(TF_VAR_client_secret)
-              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+          # - task: TerraformCLI@1
+          #   displayName: "terraform destroy"
+          #   inputs:
+          #     backendType: azurerm
+          #     command: "destroy"
+          #     workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+          #     environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+          #   env:
+          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
+          #     TF_VAR_client_id: $(TF_VAR_client_id)
+          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
+          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)

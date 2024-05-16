@@ -48,9 +48,9 @@ if [[ -n "$IP_ADDRESS" ]]; then
     sudo ./svc.sh start
 
     sudo apt update -y
-    sudo apt-get install python3.10-venv
-    sudo apt-get install python3-pip
-    sudo apt-get install python3.10-distutils
+    sudo apt install -y python3.10-venv
+    sudo apt install -y python3-pip
+    sudo apt install -y python3.10-distutils
     sudo apt install -y zip
 
     pip install pylint==2.13.7
