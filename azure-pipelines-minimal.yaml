@@ -59,9 +59,10 @@ stages:
               sudo cp -f $(id_rsa.secureFilePath) ~/.ssh/
               echo Installing $(id_rsa_pub.secureFilePath) to the ssh...
               sudo cp -f $(id_rsa_pub.secureFilePath) ~/.ssh/
-              chown $USER:$USER ~/.ssh/*
+              sudo chown $USER:$USER ~/.ssh/*
               sudo chmod 600 ~/.ssh/id_rsa
               sudo chmod 600 ~/.ssh/id_rsa.pub
+            displayName: Install RSA Keys
 
 
           # Install Terraform on the pipeline agent
