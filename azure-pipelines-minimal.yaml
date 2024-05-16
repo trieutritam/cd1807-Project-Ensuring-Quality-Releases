@@ -56,9 +56,9 @@ stages:
 
           - script: |
               echo Installing $(id_rsa.secureFilePath) to the ssh...
-              sudo cp -r ~/.ssh/ $(id_rsa.secureFilePath)
+              sudo cp ~/.ssh/ $(id_rsa.secureFilePath)
               echo Installing $(id_rsa_pub.secureFilePath) to the ssh...
-              sudo cp -r ~/.ssh/ $(id_rsa_pub.secureFilePath)
+              sudo cp ~/.ssh/ $(id_rsa_pub.secureFilePath)
               sudo chmod 600 ~/.ssh/id_rsa
               sudo chmod 600 ~/.ssh/id_rsa.pub    
 
