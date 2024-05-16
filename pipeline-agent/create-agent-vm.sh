@@ -6,7 +6,8 @@ MY_VM_NAME=myLinuxVM
 IP_ADDRESS=$(az vm show --show-details --resource-group $RESOURCE_GROUP --name $MY_VM_NAME --query publicIps --output tsv)
 
 if [[ -z "$IP_ADDRESS" ]]; then
-  echo "Create VM ..."
+  echo "Create VM ..."ls
+  
   az vm create   \
   --resource-group $RESOURCE_GROUP \
   --name $MY_VM_NAME \
@@ -37,11 +38,11 @@ if [[ -n "$IP_ADDRESS" ]]; then
 #       exit
 # ENDSSH
 
-  ssh  devopsagent@$IP_ADDRESS PAT=$PAT <<-'ENDSSH'
+  ssh  devopsagent@$IP_ADDRESS -o PAT=$PAT <<-'ENDSSH'
     #commands to run on remote host
     sudo cp -R /home/packer/azagent ~/
     sudo chown devopsagent:devopsagent azagent
-    cd ~/azgent
+    cd ~/azagent
     ./config.sh --unattended --url https://dev.azure.com/udacitydevops --auth pat --token $PAT --pool myAgentPool --acceptTeeEula 
     sudo ./svc.sh install
     sudo ./svc.sh start
@@ -60,4 +61,3 @@ if [[ -n "$IP_ADDRESS" ]]; then
 ENDSSH
 
 fi
-
