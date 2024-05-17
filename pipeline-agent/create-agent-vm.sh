@@ -6,7 +6,7 @@ MY_VM_NAME=myLinuxVM
 IP_ADDRESS=$(az vm show --show-details --resource-group $RESOURCE_GROUP --name $MY_VM_NAME --query publicIps --output tsv)
 
 if [[ -z "$IP_ADDRESS" ]]; then
-  echo "Create VM ..."ls
+  echo "Create VM ..."
   
   az vm create   \
   --resource-group $RESOURCE_GROUP \
