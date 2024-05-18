@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 export AZ_DEVOPS_PAT="AZURE_PAT"
 
