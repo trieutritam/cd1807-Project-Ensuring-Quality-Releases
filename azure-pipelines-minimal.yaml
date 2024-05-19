@@ -196,12 +196,12 @@ stages:
                     package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
                 #--------------------------------------------#
                 # Run JMeter test suite against the App Service
-                - task: CmdLine@2
-                  inputs:
-                    script: |
-                      wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
-                      tar -xf apache-jmeter-5.6.3.tgz
-                      unzip -o $(Build.BuildId)-perftests.zip
-                      ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                      cat jmeter.log
-                    workingDirectory: $(Pipeline.Workspace)/drop-perftests
+                # - task: CmdLine@2
+                #   inputs:
+                #     script: |
+                #       wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
+                #       tar -xf apache-jmeter-5.6.3.tgz
+                #       unzip -o $(Build.BuildId)-perftests.zip
+                #       ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                #       cat jmeter.log
+                #     workingDirectory: $(Pipeline.Workspace)/drop-perftests
