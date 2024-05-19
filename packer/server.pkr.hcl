@@ -56,10 +56,22 @@ build {
     destination = "/tmp/setup_devops_agent.sh"
   }
 
+  provisioner "file" {
+    source = "../../sshkey/azuredevops_rsa"
+    destination = "/tmp/azuredevops_rsa"
+  }
+
+  provisioner "file" {
+    source = "../../sshkey/azuredevops_rsa.pub"
+    destination = "/tmp/azuredevops_rsa.pub"
+  }
+
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
 
     inline          = [
+      "cp /tmp/azuredevops_rsa ./",
+      "cp /tmp/azuredevops_rsa.pub ./",
       "mkdir -p azagent",
       "cd azagent",
       "curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.238.0/vsts-agent-linux-x64-3.238.0.tar.gz",

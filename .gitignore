@@ -27,3 +27,5 @@ override.tf.json
 labinfo.txt
 cmd.sh
 .terraform.lock.hcl
+
+automatedtesting/postman/*.xml
