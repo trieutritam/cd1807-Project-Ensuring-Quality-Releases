@@ -184,8 +184,6 @@ stages:
       - deployment: FakeRestAPI
         environment: 
           name: test
-          resourceType: VirtualMachine
-          tags: selenium
         strategy:
           runOnce:
             deploy:
