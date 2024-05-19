@@ -68,7 +68,8 @@ stages:
           - task: CmdLine@2
             displayName: Install Newman
             inputs:
-              script: "npm install -g newman"
+              script: "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+                      apt-get install -y nodejs && rm -rf /var/lib/apt/lists/* && npm install -g newman"
               workingDirectory: $(System.DefaultWorkingDirectory)
 
 
