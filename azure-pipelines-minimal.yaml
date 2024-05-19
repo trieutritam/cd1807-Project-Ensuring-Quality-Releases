@@ -125,10 +125,11 @@ stages:
 
           #--------------------------------------------#
           # Node - Install NodeJS
-          - script: |
-              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-              nvm install 20
-            displayName: Install NodeJS
+          # - script: |
+          #     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+          #     nvm install 20
+          #   displayName: Install NodeJS
+          #   workingDirectory: 
 
           # Postman - Install Newman
           - task: CmdLine@2
