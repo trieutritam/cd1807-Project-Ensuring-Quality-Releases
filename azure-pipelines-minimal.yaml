@@ -108,20 +108,6 @@ stages:
               TF_VAR_tenant_id: $(TF_VAR_tenant_id)
               TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
-          # - task: TerraformCLI@1
-          #   displayName: "terraform destroy"
-          #   inputs:
-          #     backendType: azurerm
-          #     command: "destroy"
-          #     workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-          #     environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
-          #   env:
-          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-          #     TF_VAR_client_id: $(TF_VAR_client_id)
-          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
-          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
-
           #--------------------------------------------#
           - task: UseNode@1
             inputs:
@@ -156,3 +142,83 @@ stages:
               searchFolder: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
               mergeTestResults: true
               testRunTitle: "Postman Test Result"
+
+          #--------------------------------------------#
+          # Selenium (UI) Test Suite - Archive the package
+          # "ArchiveFiles@2" picks up the web package and archives it.
+          - task: ArchiveFiles@2
+            displayName: "Archive UI Tests"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip"
+          # Selenium Test Suite - Publish the package
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip # Same as the archiveFile artifact above.
+            displayName: "Upload Package"
+            artifact: drop-uitests
+
+          #--------------------------------------------#
+          # FakeRestAPI - Archive
+          # ToDo: Complete the ArchiveFiles@2 task and publish step
+          - task: ArchiveFiles@2
+            displayName: "Archive FakeRestAPI"
+            inputs:
+              rootFolderOrFile:
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+            displayName: "Upload Package"
+            artifact: drop-fakerestapi
+
+          #--------------------------------------------#
+          # JMeter (Performance) Test Suite - Archive
+          # ToDo: Complete the ArchiveFiles@2 task and publish step
+          - task: ArchiveFiles@2
+            displayName: "Archive PerformanceTestSuite"
+            inputs:
+              rootFolderOrFile:
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
+          # JMeter Test Suite - Publish
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
+            displayName: "Upload Package"
+            artifact: drop-perftests
+
+
+  #--------------------------------------------#
+  # DEPLOYMENT STAGE
+  #--------------------------------------------#
+  - stage: Deploy
+    jobs:
+      #--------------------------------------------#
+      # Deploy FakeRestAPI Web App
+      # ToDo: Provide <environment name> you created in your DevOps project
+      - deployment: FakeRestAPI
+        pool:
+          vmImage: "Ubuntu-22.04"
+        environment: <environment name> # ToDo
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: "Deploy Azure Web App"
+                  inputs:
+                    azureSubscription: "" # ToDo
+                    appName: "" # ToDo
+                    appType: webApp
+                    package: $(Pipeline.Workspace)/<artifact>/<archiveFile> # ToDo: Use the published zip artifact.
+                #--------------------------------------------#
+                # Run JMeter test suite against the App Service
+                - task: CmdLine@2
+                  inputs:
+                    script: |
+                      wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.2.1.tgz"
+                      tar -xf apache-jmeter-5.2.1.tgz
+                      unzip -o $(Build.BuildId)-perftests.zip
+                      ./apache-jmeter-5.2.1/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                      cat jmeter.log                                                                           # ToDo: Write your commands
+                    workingDirectory: $(Pipeline.Workspace)/<artifact> # ToDo: Use the artifact name from the task above
