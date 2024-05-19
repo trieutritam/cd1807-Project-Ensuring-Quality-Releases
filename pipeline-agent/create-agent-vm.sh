@@ -31,10 +31,10 @@ if [[ -n "$IP_ADDRESS" ]]; then
   sshpass -p DevOpsAgent@123 ssh devopsagent@$IP_ADDRESS <<-'ENDSSH'
       sudo cp /home/packer/azuredevops_rsa ~/.ssh/id_rsa
       sudo cp /home/packer/azuredevops_rsa.pub ~/.ssh/id_rsa.pub
+      sudo cat /home/packer/azuredevops_rsa.pub >> ~/.ssh/authorized_keys
       sudo chown devopsagent:devopsagent ~/.ssh/*
       sudo chmod 600 ~/.ssh/id_rsa
       sudo chmod 600 ~/.ssh/id_rsa.pub
-      cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ENDSSH
 
   # Install Docker and restart
@@ -58,6 +58,19 @@ ENDSSH
       echo $PATH
 
       sudo snap install terraform --classic
+
+      # installs nvm (Node Version Manager)
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      # download and install Node.js
+      nvm install 20
+      # verifies the right Node.js version is in the environment
+      node -v # should print `v20.13.1`
+      # verifies the right NPM version is in the environment
+      npm -v # should print `10.5.2`
+
+      # Install newman
+      npm install -g newman
+
 
       sudo reboot
 ENDSSH

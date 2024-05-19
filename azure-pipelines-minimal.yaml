@@ -124,11 +124,19 @@ stages:
           #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
           #--------------------------------------------#
+          # Node - Install NodeJS
+          - script: |
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+              nvm install 20
+              node -v
+              npm -v
+            displayName: Install NodeJS
+
           # Postman - Install Newman
           - task: CmdLine@2
             displayName: Install Newman
             inputs:
-              script: "sudo npm install -g newman"
+              script: "npm install -g newman"
               workingDirectory: $(System.DefaultWorkingDirectory)
           # Postman Data Validation Test Suite
           - task: CmdLine@2
