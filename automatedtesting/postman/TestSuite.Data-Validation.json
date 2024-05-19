@@ -13,7 +13,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful response\", function () {",
+							"pm.test(\"Create User-Successful response\", function () {",
 							"    var json = pm.response.json();",
 							"    pm.expect(json.name).eq(\"Tamtt\")",
 							"});",
@@ -69,7 +69,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful request\", function () {",
+							"pm.test(\"Get All Users-Successful request\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([200]);",
 							"});"
 						],
@@ -103,7 +103,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful request\", function () {",
+							"pm.test(\"Get Created User-Successful request\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([200]);",
 							"});",
 							"",
