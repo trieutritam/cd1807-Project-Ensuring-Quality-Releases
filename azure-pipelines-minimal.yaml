@@ -64,6 +64,11 @@ stages:
               sudo chmod 600 ~/.ssh/id_rsa.pub
             displayName: Install RSA Keys
 
+          - task: UseNode@1
+            inputs:
+              version: '20.x'
+            displayName: 'Install Node.js'
+
           # Postman - Install Newman
           - task: CmdLine@2
             displayName: Install Newman
