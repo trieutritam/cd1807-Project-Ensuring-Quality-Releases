@@ -59,6 +59,7 @@ ENDSSH
 
       sudo snap install terraform --classic
 
+      sudo su root
       # installs nvm (Node Version Manager)
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
       # download and install Node.js
@@ -71,6 +72,7 @@ ENDSSH
       # Install newman
       npm install -g newman
 
+      exit
 
       sudo reboot
 ENDSSH

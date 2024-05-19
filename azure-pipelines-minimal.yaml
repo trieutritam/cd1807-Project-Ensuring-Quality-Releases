@@ -64,6 +64,13 @@ stages:
               sudo chmod 600 ~/.ssh/id_rsa.pub
             displayName: Install RSA Keys
 
+          # Postman - Install Newman
+          - task: CmdLine@2
+            displayName: Install Newman
+            inputs:
+              script: "npm install -g newman"
+              workingDirectory: $(System.DefaultWorkingDirectory)
+
 
           # Install Terraform on the pipeline agent
           - task: TerraformInstaller@1
