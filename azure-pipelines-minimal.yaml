@@ -203,7 +203,7 @@ stages:
                       tar -xf apache-jmeter-5.6.3.tgz
                       unzip -o $(Build.BuildId)-perftests.zip
                       ./apache-jmeter-5.6.3/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                      cat jmeter.log
+                      cat ./jmeter.log
                     workingDirectory: $(Pipeline.Workspace)/drop-perftests
       #--------------------------------------------#
       # Selenium | Functional UI Tests
@@ -219,7 +219,7 @@ stages:
             deploy:
               steps:
                 - download: current
-                  artifact: drop-ui-tests # ToDo: Change/provide a name
+                  artifact: drop-ui-tests
 
                 - task: Bash@3
                   inputs:
