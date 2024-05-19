@@ -27,21 +27,6 @@ stages:
     jobs:
       - job: BuildInfrastructure
         steps:
-          # - script: |
-          #     echo $TF_VAR_subscription_id
-          #     echo $TF_VAR_client_id
-          #     echo $TF_VAR_client_secret
-          #     echo $TF_VAR_tenant_id
-          #     echo $TF_VAR_azure_devops_pat
-          #   env:
-          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-          #     TF_VAR_client_id: $(TF_VAR_client_id)
-          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
-          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
-          
-          # - script: env | sort
-
           - task: DownloadSecureFile@1
             name: id_rsa
             displayName: 'Download RSA key'
@@ -64,84 +49,84 @@ stages:
               sudo chmod 600 ~/.ssh/id_rsa.pub
             displayName: Install RSA Keys
 
-          # Install Terraform on the pipeline agent
-          - task: TerraformInstaller@1
-            displayName: "Terrafom installation"
-            inputs:
-              terraformVersion: "1.8.3"
+          # # Install Terraform on the pipeline agent
+          # - task: TerraformInstaller@1
+          #   displayName: "Terrafom installation"
+          #   inputs:
+          #     terraformVersion: "1.8.3"
 
-          - task: TerraformCLI@1
-            displayName: "terraform init"
-            inputs:
-              backendType: azurerm
-              command: "init"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              backendServiceArm: "$(azureServiceConnectionId)"
-              backendAzureRmResourceGroupName: "Azuredevops"
-              backendAzureRmStorageAccountName: "tfstate070119820513"
-              backendAzureRmContainerName: "tfstate"
-              backendAzureRmKey: "test.terraform.tfstate"
-            env:
-              TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-              TF_VAR_client_id: $(TF_VAR_client_id)
-              TF_VAR_client_secret: $(TF_VAR_client_secret)
-              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+          # - task: TerraformCLI@1
+          #   displayName: "terraform init"
+          #   inputs:
+          #     backendType: azurerm
+          #     command: "init"
+          #     workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+          #     backendServiceArm: "$(azureServiceConnectionId)"
+          #     backendAzureRmResourceGroupName: "Azuredevops"
+          #     backendAzureRmStorageAccountName: "tfstate070119820513"
+          #     backendAzureRmContainerName: "tfstate"
+          #     backendAzureRmKey: "test.terraform.tfstate"
+          #   env:
+          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
+          #     TF_VAR_client_id: $(TF_VAR_client_id)
+          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
+          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
-          - task: TerraformCLI@1
-            displayName: "terraform validate"
-            inputs:
-              backendType: azurerm
-              command: "validate"
+          # - task: TerraformCLI@1
+          #   displayName: "terraform validate"
+          #   inputs:
+          #     backendType: azurerm
+          #     command: "validate"
 
-          - task: TerraformCLI@1
-            displayName: "terraform apply"
-            inputs:
-              backendType: azurerm
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
-            env:
-              TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
-              TF_VAR_client_id: $(TF_VAR_client_id)
-              TF_VAR_client_secret: $(TF_VAR_client_secret)
-              TF_VAR_tenant_id: $(TF_VAR_tenant_id)
-              TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
+          # - task: TerraformCLI@1
+          #   displayName: "terraform apply"
+          #   inputs:
+          #     backendType: azurerm
+          #     command: "apply"
+          #     workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+          #     environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+          #   env:
+          #     TF_VAR_subscription_id: "$(TF_VAR_subscription_id)"
+          #     TF_VAR_client_id: $(TF_VAR_client_id)
+          #     TF_VAR_client_secret: $(TF_VAR_client_secret)
+          #     TF_VAR_tenant_id: $(TF_VAR_tenant_id)
+          #     TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
-          #--------------------------------------------#
-          - task: UseNode@1
-            inputs:
-              version: '20.x'
-            displayName: 'Install Node.js'
+          # #--------------------------------------------#
+          # - task: UseNode@1
+          #   inputs:
+          #     version: '20.x'
+          #   displayName: 'Install Node.js'
 
-          # Postman - Install Newman
-          - task: CmdLine@2
-            displayName: Install Newman
-            inputs:
-              script: "npm install -g newman"
-              workingDirectory: $(System.DefaultWorkingDirectory)
-          # Postman Data Validation Test Suite
-          - task: CmdLine@2
-            displayName: Run Data Validation Tests
-            continueOnError: true
-            inputs:
-              script: "newman run TestSuite.Data-Validation.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
-          # Postman Regression Test Suite
-          - task: CmdLine@2
-            displayName: Run Regression Tests
-            continueOnError: true
-            inputs:
-              script: "newman run TestSuite.Regression.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
-          # Postman - Publish Results
-          - task: PublishTestResults@2
-            inputs:
-              testResultsFormat: "JUnit"
-              testResultsFiles: "**/TEST-*.xml"
-              searchFolder: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
-              mergeTestResults: true
-              testRunTitle: "Postman Test Result"
+          # # Postman - Install Newman
+          # - task: CmdLine@2
+          #   displayName: Install Newman
+          #   inputs:
+          #     script: "npm install -g newman"
+          #     workingDirectory: $(System.DefaultWorkingDirectory)
+          # # Postman Data Validation Test Suite
+          # - task: CmdLine@2
+          #   displayName: Run Data Validation Tests
+          #   continueOnError: true
+          #   inputs:
+          #     script: "newman run TestSuite.Data-Validation.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml"
+          #     workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
+          # # Postman Regression Test Suite
+          # - task: CmdLine@2
+          #   displayName: Run Regression Tests
+          #   continueOnError: true
+          #   inputs:
+          #     script: "newman run TestSuite.Regression.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml"
+          #     workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
+          # # Postman - Publish Results
+          # - task: PublishTestResults@2
+          #   inputs:
+          #     testResultsFormat: "JUnit"
+          #     testResultsFiles: "**/TEST-*.xml"
+          #     searchFolder: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
+          #     mergeTestResults: true
+          #     testRunTitle: "Postman Test Result"
 
           #--------------------------------------------#
           # Selenium (UI) Test Suite - Archive the package
