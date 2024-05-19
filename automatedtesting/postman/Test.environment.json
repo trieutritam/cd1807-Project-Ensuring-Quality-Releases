@@ -1,0 +1,39 @@
+{
+	"id": "207b9b2a-f8be-4992-83d0-e0c4ddbb51bc",
+	"name": "Test.environemnt",
+	"values": [
+		{
+			"key": "name",
+			"value": "Tamtt",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "email",
+			"value": "Tamtt@local.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "status",
+			"value": "active",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "gender",
+			"value": "male",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-05-19T06:23:58.115Z",
+	"_postman_exported_using": "Postman/11.1.3"
+}
