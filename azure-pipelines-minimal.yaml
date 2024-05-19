@@ -168,6 +168,7 @@ stages:
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
+
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
             displayName: "Upload Package"
             artifact: drop-fakerestapi
@@ -195,11 +196,10 @@ stages:
     jobs:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
-      # ToDo: Provide <environment name> you created in your DevOps project
       - deployment: FakeRestAPI
         pool:
           vmImage: "Ubuntu-22.04"
-        environment: <environment name> # ToDo
+        environment: test
         strategy:
           runOnce:
             deploy:
@@ -207,10 +207,10 @@ stages:
                 - task: AzureWebApp@1
                   displayName: "Deploy Azure Web App"
                   inputs:
-                    azureSubscription: "" # ToDo
-                    appName: "" # ToDo
+                    azureSubscription: "$(TF_VAR_subscription_id)"
+                    appName: "myApplication-AppService"
                     appType: webApp
-                    package: $(Pipeline.Workspace)/<artifact>/<archiveFile> # ToDo: Use the published zip artifact.
+                    package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
                 #--------------------------------------------#
                 # Run JMeter test suite against the App Service
                 - task: CmdLine@2
@@ -220,5 +220,5 @@ stages:
                       tar -xf apache-jmeter-5.2.1.tgz
                       unzip -o $(Build.BuildId)-perftests.zip
                       ./apache-jmeter-5.2.1/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                      cat jmeter.log                                                                           # ToDo: Write your commands
-                    workingDirectory: $(Pipeline.Workspace)/<artifact> # ToDo: Use the artifact name from the task above
+                      cat jmeter.log
+                    workingDirectory: $(Pipeline.Workspace)/drop-perftests
