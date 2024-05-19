@@ -15,7 +15,13 @@ resource "azurerm_linux_web_app" "test" {
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = 0
   }
+
   site_config {
     always_on = false
+
+    application_stack {
+      dotnet_version = "5.0"
+    }
   }
+  
 }
