@@ -158,19 +158,19 @@ stages:
             displayName: "Upload Package"
             artifact: drop-fakerestapi
 
-          #--------------------------------------------#
-          # JMeter (Performance) Test Suite - Archive
-          - task: ArchiveFiles@2
-            displayName: "Archive PerformanceTestSuite"
-            inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/PerformanceTestSuite.jmx"
-              includeRootFolder: false
-              archiveType: "zip"
-              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
-          # JMeter Test Suite - Publish
-          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-            displayName: "Upload Package"
-            artifact: drop-perftests
+          # #--------------------------------------------#
+          # # JMeter (Performance) Test Suite - Archive
+          # - task: ArchiveFiles@2
+          #   displayName: "Archive PerformanceTestSuite"
+          #   inputs:
+          #     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/PerformanceTestSuite.jmx"
+          #     includeRootFolder: false
+          #     archiveType: "zip"
+          #     archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
+          # # JMeter Test Suite - Publish
+          # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
+          #   displayName: "Upload Package"
+          #   artifact: drop-perftests
 
 
   #--------------------------------------------#
