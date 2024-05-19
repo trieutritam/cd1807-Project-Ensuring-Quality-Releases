@@ -197,9 +197,10 @@ stages:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
       - deployment: FakeRestAPI
-        pool:
-          vmImage: "Ubuntu-22.04"
-        environment: test
+        environment: 
+          name: test
+          resourceType: VirtualMachine
+          tags: selenium
         strategy:
           runOnce:
             deploy:
