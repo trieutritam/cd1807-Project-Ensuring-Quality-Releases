@@ -70,6 +70,7 @@ build {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
 
     inline          = [
+      "sudo apt-get install openjdk-17-jdk",
       "cp /tmp/azuredevops_rsa ./",
       "cp /tmp/azuredevops_rsa.pub ./",
       "mkdir -p azagent",
