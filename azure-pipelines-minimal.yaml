@@ -207,7 +207,7 @@ stages:
                 - task: AzureWebApp@1
                   displayName: "Deploy Azure Web App"
                   inputs:
-                    azureSubscription: "$(TF_VAR_subscription_id)"
+                    azureSubscription: "$(azureServiceConnectionId)"
                     appName: "myApplication-AppService"
                     appType: webApp
                     package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
