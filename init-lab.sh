@@ -12,7 +12,7 @@ source $SCRIPT_DIR/init-vars.sh
 
 # Build image
 cd $SCRIPT_DIR/packer
-
+packer init ./server.pkr.hcl
 packer build ./server.pkr.hcl
 
 # Terraform
