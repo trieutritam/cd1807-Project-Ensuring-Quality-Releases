@@ -180,6 +180,7 @@ stages:
   # DEPLOYMENT STAGE
   #--------------------------------------------#
   - stage: Deploy
+    dependsOn: Build
     jobs:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
@@ -223,7 +224,7 @@ stages:
             deploy:
               steps:
                 - download: current
-                  artifact: drop-ui-tests
+                  artifact: drop-uitests
 
                 - task: Bash@3
                   inputs:
