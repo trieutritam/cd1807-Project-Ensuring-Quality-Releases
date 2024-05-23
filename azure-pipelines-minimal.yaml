@@ -233,6 +233,7 @@ stages:
                       #! /bin/bash
 
                       sudo apt -y install unzip
+                      pip install selenium
 
                       cd ~/
                       DIR=./app
