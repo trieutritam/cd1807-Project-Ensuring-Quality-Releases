@@ -50,7 +50,7 @@ stages:
             displayName: Install RSA Keys
 
           - script: |
-            ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
+              export ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
             displayName: Retrieve storage account key
 
           # Install Terraform on the pipeline agent
