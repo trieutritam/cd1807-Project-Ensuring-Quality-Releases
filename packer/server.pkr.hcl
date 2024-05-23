@@ -57,12 +57,12 @@ build {
   }
 
   provisioner "file" {
-    source = "../../sshkey/azuredevops_rsa"
+    source = "./sshkey/azuredevops_rsa"
     destination = "/tmp/azuredevops_rsa"
   }
 
   provisioner "file" {
-    source = "../../sshkey/azuredevops_rsa.pub"
+    source = "./sshkey/azuredevops_rsa.pub"
     destination = "/tmp/azuredevops_rsa.pub"
   }
 
@@ -70,7 +70,8 @@ build {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
 
     inline          = [
-      "sudo apt-get install openjdk-17-jdk",
+      "sudo apt-get install -y openjdk-17-jdk",
+      "sudo apt-get install -y python3-pip unzip chromium-browser selenium",
       "cp /tmp/azuredevops_rsa ./",
       "cp /tmp/azuredevops_rsa.pub ./",
       "mkdir -p azagent",

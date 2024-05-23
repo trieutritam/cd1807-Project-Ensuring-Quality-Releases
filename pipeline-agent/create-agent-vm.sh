@@ -2,6 +2,7 @@
 
 RESOURCE_GROUP=Azuredevops
 MY_VM_NAME=myLinuxVM
+LOCATION=eastus
 
 IP_ADDRESS=$(az vm show --show-details --resource-group $RESOURCE_GROUP --name $MY_VM_NAME --query publicIps --output tsv)
 
@@ -9,7 +10,7 @@ if [[ -z "$IP_ADDRESS" ]]; then
   echo "Create VM ..."
   
   az vm create   \
-  --resource-group $RESOURCE_GROUP \
+  --resource-group $RESOURCE_GROUP --location $LOCATION \
   --name $MY_VM_NAME \
   --image 'azgent-vm-image' \
   --size Standard_DS1_v2 \
@@ -38,10 +39,10 @@ if [[ -n "$IP_ADDRESS" ]]; then
 ENDSSH
 
   # Install Docker and restart
-  ssh -i ../../sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS "echo export PAT=$TF_VAR_azure_devops_pat >> ~/.bashrc"
+  ssh -i ../packer/sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS "echo export PAT=$TF_VAR_azure_devops_pat >> ~/.bashrc"
 
   # Install Docker and restart
-  ssh -i ../../sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS <<-'ENDSSH'
+  ssh -i ../packer/sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS <<-'ENDSSH'
       sudo snap install docker
       sudo groupadd docker
       sudo usermod -aG docker $USER
@@ -62,13 +63,13 @@ ENDSSH
       sudo reboot
 ENDSSH
 
-  while ! ssh -i ../../sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS 'echo OK'
+  while ! ssh -i ../packer/sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS 'echo OK'
   do
     echo "Wait for ssh..."
     sleep 5
   done
 
-  ssh -i ../../sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS <<-'ENDSSH'
+  ssh -i ../packer/sshkey/azuredevops_rsa devopsagent@$IP_ADDRESS <<-'ENDSSH'
     #commands to run on remote host
     sudo cp -R /home/packer/azagent ~/
     sudo chown devopsagent:devopsagent azagent
