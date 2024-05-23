@@ -234,7 +234,8 @@ stages:
 
                       sudo apt -y install unzip
                       pip install selenium
-
+                      pip install webdriver-manager
+                      
                       cd ~/
                       DIR=./app
                       if [ ! -d "$DIR" ]; then
