@@ -47,11 +47,8 @@ stages:
               sudo chown $USER:$USER ~/.ssh/*
               sudo chmod 600 ~/.ssh/id_rsa
               sudo chmod 600 ~/.ssh/id_rsa.pub
-            displayName: Install RSA Keys
-
-          - script: |
               export ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
-            displayName: Retrieve storage account key
+            displayName: Preparation
 
           # Install Terraform on the pipeline agent
           - task: TerraformInstaller@1
@@ -201,12 +198,14 @@ stages:
                 #--------------------------------------------#
                 # Run JMeter test suite against the App Service
                 - task: CmdLine@2
+                  displayName: "Performance test"
                   inputs:
                     script: |
                       export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
                       wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
                       tar -xf apache-jmeter-5.6.3.tgz
                       unzip -o $(Build.BuildId)-perftests.zip
+                      rm -Rf test-report
                       ./apache-jmeter-5.6.3/bin/jmeter -n -t ./PerformanceTestSuite.jmx -l test-report/test-results.jtl -e -o test-report
                       cat ./jmeter.log
                     workingDirectory: $(Pipeline.Workspace)/drop-perftests
@@ -227,6 +226,7 @@ stages:
                   artifact: drop-uitests
 
                 - task: Bash@3
+                  displayName: "UI test"
                   inputs:
                     targetType: "inline"
                     script: |
@@ -239,7 +239,7 @@ stages:
                       if [ ! -d "$DIR" ]; then
                           mkdir app
                       fi
-                      mv /usr/local/share/azagent/_work/1/drop-ui-tests/$(Build.BuildId)-uitests.zip $DIR
+                      mv /usr/local/share/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
                       cd $DIR
                       unzip -o $(Build.BuildId)-uitests.zip
                       FILE=./chromedriver_linux64.zip
