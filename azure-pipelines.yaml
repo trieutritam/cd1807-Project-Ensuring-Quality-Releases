@@ -7,11 +7,12 @@ trigger:
   - main
 
 # ToDo: Replace the agent pool name, if you are using Udacity Cloud lab.
-# Otherwise, comment out the line below.
+# Otherwise comment out the line below.
 pool: myAgentPool
 
 variables:
   - group: PipelineEnv
+  # ToDo: Replace the service connection name as used in the DevOps project settings
   - name: azureServiceConnectionId
     value: "myServiceConnection"
   # Project root folder. Point to the folder containing manage.py file.
@@ -22,24 +23,21 @@ variables:
     value: "test"
 
 stages:
-  #--------------------------------------------#
-  # BUILD STAGE
-  #--------------------------------------------#
   - stage: Build
     jobs:
       - job: BuildInfrastructure
         steps:
           - task: DownloadSecureFile@1
             name: id_rsa
-            displayName: 'Download RSA key'
+            displayName: "Download RSA key"
             inputs:
-              secureFile: 'id_rsa'
+              secureFile: "id_rsa"
 
           - task: DownloadSecureFile@1
             name: id_rsa_pub
-            displayName: 'Download RSA key'
+            displayName: "Download RSA key"
             inputs:
-              secureFile: 'id_rsa.pub'
+              secureFile: "id_rsa.pub"
 
           - script: |
               echo Installing $(id_rsa.secureFilePath) to the ssh...
@@ -49,18 +47,15 @@ stages:
               sudo chown $USER:$USER ~/.ssh/*
               sudo chmod 600 ~/.ssh/id_rsa
               sudo chmod 600 ~/.ssh/id_rsa.pub
-            displayName: Install RSA Keys
+              export ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
+            displayName: Preparation
 
-          #--------------------------------------------#
-          # Use Terraform to create the Infrastructure
           # Install Terraform on the pipeline agent
           - task: TerraformInstaller@1
             displayName: "Terrafom installation"
             inputs:
               terraformVersion: "1.8.3"
 
-          # Run Terraform Init on the pipeline agent
-          # ToDo: Replace the resource group name, storage account name, and container name below
           - task: TerraformCLI@1
             displayName: "terraform init"
             inputs:
@@ -85,23 +80,6 @@ stages:
               backendType: azurerm
               command: "validate"
 
-          # OPTIONAL - This step is needed only if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it.
-          # Generate an SSH key pair in your local/AZ Cloud shell. Use the public key in the Terraform VM module.
-          # Install public key and private key file to the pipeline agent, using the task below.
-          # ToDo: Change the inputs value below
-          # - task: InstallSSHKey@0
-          #   inputs:
-          #     knownHostsEntry: 'KNOWN_HOSTS_STRING' # variable value
-          #     sshPublicKey: 'PUBLIC_KEY'            # variable value
-          #     sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
-
-          # - task: DownloadSecureFile@1
-          #  name: udacity_public_key
-          #  displayName:
-          #  inputs:
-          #   secureFile:
-
-          # Run Terraform Apply
           - task: TerraformCLI@1
             displayName: "terraform apply"
             inputs:
@@ -116,26 +94,19 @@ stages:
               TF_VAR_tenant_id: $(TF_VAR_tenant_id)
               TF_VAR_azure_devops_pat: $(TF_VAR_azure_devops_pat)
 
-          # ToDo: Change the workingDirectory path, as applicable to you
-          # Destroy the resources in Azure by running a separate pipeline.
-          # - task: TerraformTaskV3@3
-          #   displayName: Terraform destroy
-          #   inputs:
-          #     provider: 'azurerm'
-          #     command: 'destroy'
-          #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-          #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
           #--------------------------------------------#
+          - task: UseNode@1
+            inputs:
+              version: "20.x"
+            displayName: "Install Node.js"
+
           # Postman - Install Newman
-          # ToDo: Update the command and verify the working directory
           - task: CmdLine@2
             displayName: Install Newman
             inputs:
-              script: "sudo npm install -g newman"
+              script: "npm install -g newman"
               workingDirectory: $(System.DefaultWorkingDirectory)
           # Postman Data Validation Test Suite
-          # ToDo: Verify the working directory
           - task: CmdLine@2
             displayName: Run Data Validation Tests
             continueOnError: true
@@ -143,7 +114,6 @@ stages:
               script: "newman run TestSuite.Data-Validation.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml"
               workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
           # Postman Regression Test Suite
-          # ToDo: Verify the working directory
           - task: CmdLine@2
             displayName: Run Regression Tests
             continueOnError: true
@@ -151,14 +121,13 @@ stages:
               script: "newman run TestSuite.Regression.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml"
               workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
           # Postman - Publish Results
-          # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: "JUnit"
               testResultsFiles: "**/TEST-*.xml"
-              searchFolder: # ToDo
+              searchFolder: "$(System.DefaultWorkingDirectory)/automatedtesting/postman"
               mergeTestResults: true
-              testRunTitle: # ToDo
+              testRunTitle: "Postman Test Result"
 
           #--------------------------------------------#
           # Selenium (UI) Test Suite - Archive the package
@@ -181,21 +150,21 @@ stages:
           - task: ArchiveFiles@2
             displayName: "Archive FakeRestAPI"
             inputs:
-              rootFolderOrFile:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
+
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
             displayName: "Upload Package"
             artifact: drop-fakerestapi
 
           #--------------------------------------------#
           # JMeter (Performance) Test Suite - Archive
-          # ToDo: Complete the ArchiveFiles@2 task and publish step
           - task: ArchiveFiles@2
             displayName: "Archive PerformanceTestSuite"
             inputs:
-              rootFolderOrFile:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/testsuite"
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
@@ -208,14 +177,13 @@ stages:
   # DEPLOYMENT STAGE
   #--------------------------------------------#
   - stage: Deploy
+    dependsOn: Build
     jobs:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
-      # ToDo: Provide <environment name> you created in your DevOps project
       - deployment: FakeRestAPI
-        pool:
-          vmImage: "Ubuntu-22.04"
-        environment: <environment name> # ToDo
+        environment:
+          name: test
         strategy:
           runOnce:
             deploy:
@@ -223,29 +191,31 @@ stages:
                 - task: AzureWebApp@1
                   displayName: "Deploy Azure Web App"
                   inputs:
-                    azureSubscription: "" # ToDo
-                    appName: "" # ToDo
+                    azureSubscription: "$(azureServiceConnectionId)"
+                    appName: "myApplication-AppService"
                     appType: webApp
-                    package: $(Pipeline.Workspace)/<artifact>/<archiveFile> # ToDo: Use the published zip artifact.
+                    package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
                 #--------------------------------------------#
                 # Run JMeter test suite against the App Service
                 - task: CmdLine@2
+                  displayName: "Performance test"
                   inputs:
                     script: |
-                      wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.2.1.tgz"
-                      tar -xf apache-jmeter-5.2.1.tgz
+                      export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+                      wget -q "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
+                      tar -xf apache-jmeter-5.6.3.tgz
                       unzip -o $(Build.BuildId)-perftests.zip
-                      ./apache-jmeter-5.2.1/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                      cat jmeter.log                                                                           # ToDo: Write your commands
-                    workingDirectory: $(Pipeline.Workspace)/<artifact> # ToDo: Use the artifact name from the task above
-
+                      rm -Rf test-report
+                      ./apache-jmeter-5.6.3/bin/jmeter -n -t ./PerformanceTestSuite.jmx -l test-report/test-results.jtl -e -o test-report
+                      cat ./jmeter.log
+                    workingDirectory: $(Pipeline.Workspace)/drop-perftests
       #--------------------------------------------#
       # Selenium | Functional UI Tests
       # ToDo:
       - deployment: VMDeploy
         displayName: Selenium Tests
         environment:
-          name: # ToDo: Change/provide a name
+          name: test
           resourceType: VirtualMachine
           tags: selenium
         strategy:
@@ -253,35 +223,33 @@ stages:
             deploy:
               steps:
                 - download: current
-                  artifact: drop-ui-tests # ToDo: Change/provide a name
+                  artifact: drop-uitests
 
                 - task: Bash@3
+                  displayName: "UI test"
                   inputs:
                     targetType: "inline"
                     script: |
                       #! /bin/bash
 
-                      sudo apt-get upgrade -y
-                      sudo apt-get install python3-pip -y
-                      sudo apt-get install unzip -y
-                      sudo apt-get install -y chromium-browser
-                      pip3 install selenium
+                      sudo apt -y install unzip
+                      pip install selenium
+
                       cd ~/
-                      DIR=/home/testuser/app
+                      DIR=./app
                       if [ ! -d "$DIR" ]; then
                           mkdir app
                       fi
-                      mv /home/testuser/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
-                      cd app
+                      mv /usr/local/share/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
+                      cd $DIR
                       unzip -o $(Build.BuildId)-uitests.zip
-                      FILE=/home/testuser/app/chromedriver_linux64.zip
+                      FILE=./chromedriver_linux64.zip
                       if [ ! -f "$FILE" ]; then
-                          LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                          wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                          unzip -o chromedriver_linux64.zip
+                          wget -q https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.76/linux64/chromedriver-linux64.zip
+                          unzip -o chromedriver-linux64.zip
                           sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
                       fi
-                      export PATH=$PATH:/home/testuser/app
+                      export PATH=$PATH:/root/app
                       echo "Starting Selenium Tests"
-                      python3 add_remove_from_cart.py >> selenium.log
+                      python3 add_remove_from_cart.py > selenium.log
                       echo "Completed Selenium Tests. Check selenium.log for results."
