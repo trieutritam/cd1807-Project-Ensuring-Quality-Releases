@@ -49,6 +49,10 @@ stages:
               sudo chmod 600 ~/.ssh/id_rsa.pub
             displayName: Install RSA Keys
 
+          - script: |
+            ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
+            displayName: Retrieve storage account key
+
           # Install Terraform on the pipeline agent
           - task: TerraformInstaller@1
             displayName: "Terrafom installation"
@@ -227,11 +231,6 @@ stages:
                     script: |
                       #! /bin/bash
 
-                      sudo apt-get upgrade -y
-                      sudo apt-get install python3-pip -y
-                      sudo apt-get install unzip -y
-                      sudo apt-get install -y chromium-browser
-                      pip3 install selenium
                       cd ~/
                       DIR=/home/testuser/app
                       if [ ! -d "$DIR" ]; then
