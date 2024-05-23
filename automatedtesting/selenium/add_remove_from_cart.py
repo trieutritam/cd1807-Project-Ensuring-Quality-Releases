@@ -4,9 +4,6 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
 #
 # pip install -U selenium
 #
@@ -17,9 +14,7 @@ def login (user, password):
     # Execute Chrome in headless mode
     options = ChromeOptions()
     options.add_argument("--headless")
-    # driver = webdriver.Chrome(options=options)
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
+    driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome()
     print ('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
