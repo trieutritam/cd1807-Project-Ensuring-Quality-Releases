@@ -72,7 +72,8 @@ build {
     inline          = [
       "sudo apt update",
       "sudo apt install -y openjdk-17-jre-headless",
-      "sudo apt install -y python3-pip unzip chromium-browser selenium",
+      "sudo apt install -y python3-pip unzip chromium-browser",
+      "pip install selenium"
       "cp /tmp/azuredevops_rsa ./",
       "cp /tmp/azuredevops_rsa.pub ./",
       "mkdir -p azagent",

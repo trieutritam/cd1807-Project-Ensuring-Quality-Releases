@@ -232,6 +232,8 @@ stages:
                     script: |
                       #! /bin/bash
 
+                      sudo apt -y install unzip
+
                       cd ~/
                       DIR=/home/testuser/app
                       if [ ! -d "$DIR" ]; then
