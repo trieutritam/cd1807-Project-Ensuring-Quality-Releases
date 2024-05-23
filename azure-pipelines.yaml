@@ -232,6 +232,7 @@ stages:
                     script: |
                       #! /bin/bash
 
+
                       sudo apt -y install unzip
                       pip install selenium
 
