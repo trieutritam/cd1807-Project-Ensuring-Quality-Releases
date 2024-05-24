@@ -47,10 +47,10 @@ source "azure-arm" "image_source" {
 build {
   sources = ["source.azure-arm.image_source"]
 
-  // provisioner "file" {
-  //   source = "setup_devops_agent.sh"
-  //   destination = "/tmp/setup_devops_agent.sh"
-  // }
+  provisioner "file" {
+    source = "setup_devops_agent.sh"
+    destination = "/tmp/setup_devops_agent.sh"
+  }
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"

@@ -24,7 +24,7 @@ if [[ -z "$IP_ADDRESS" ]]; then
 fi
 
 IP_ADDRESS=$(echo $IP_ADDRESS | sed -z "s/\r\n//g")
-  
+
 # IP is not empty
 if [[ -n "$IP_ADDRESS" ]]; then
   echo "VM IP: $IP_ADDRESS"

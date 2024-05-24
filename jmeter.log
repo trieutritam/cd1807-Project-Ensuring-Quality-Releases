@@ -1,0 +1,31 @@
+2024-05-20 13:21:52,362 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2024-05-20 13:21:52,382 INFO o.a.j.JMeter: Loading user properties from: /home/tamtt/Downloads/jmeter/apache-jmeter-5.6.3/bin/user.properties
+2024-05-20 13:21:52,383 INFO o.a.j.JMeter: Loading system properties from: /home/tamtt/Downloads/jmeter/apache-jmeter-5.6.3/bin/system.properties
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: Copyright (c) 1998-2024 The Apache Software Foundation
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: Version 5.6.3
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: java.version=11.0.22
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: os.name=Linux
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: os.arch=amd64
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: os.version=6.5.0-35-generic
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: file.encoding=UTF-8
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: java.awt.headless=true
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: Max memory     =1073741824
+2024-05-20 13:21:52,388 INFO o.a.j.JMeter: Available Processors =12
+2024-05-20 13:21:52,396 INFO o.a.j.JMeter: Default Locale=English (EN)
+2024-05-20 13:21:52,396 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2024-05-20 13:21:52,396 INFO o.a.j.JMeter: JMeterHome=/home/tamtt/Downloads/jmeter/apache-jmeter-5.6.3
+2024-05-20 13:21:52,396 INFO o.a.j.JMeter: user.dir  =/home/tamtt/personal/Udemy/cd1807-Project-Ensuring-Quality-Releases
+2024-05-20 13:21:52,397 INFO o.a.j.JMeter: PWD       =/home/tamtt/personal/Udemy/cd1807-Project-Ensuring-Quality-Releases
+2024-05-20 13:21:52,397 INFO o.a.j.JMeter: IP: 127.0.1.1 Name: tamtt-pc FullName: tamtt-pc
+2024-05-20 13:21:52,409 INFO o.a.j.JMeter: Setting property 'jmeter.reportgenerator.outputdir' to:'/home/tamtt/personal/Udemy/cd1807-Project-Ensuring-Quality-Releases/test-report'
+2024-05-20 13:21:52,410 ERROR o.a.j.JMeter: An error occurred: 
+org.apache.jmeter.report.config.ConfigurationException: The file /home/tamtt/personal/Udemy/cd1807-Project-Ensuring-Quality-Releases/./PerformanceTestSuite.jmx doesn't exist or can't be opened
+	at org.apache.jmeter.JMeter.runNonGui(JMeter.java:950) ~[ApacheJMeter_core.jar:5.6.3]
+	at org.apache.jmeter.JMeter.startNonGui(JMeter.java:940) ~[ApacheJMeter_core.jar:5.6.3]
+	at org.apache.jmeter.JMeter.start(JMeter.java:508) [ApacheJMeter_core.jar:5.6.3]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[?:?]
+	at org.apache.jmeter.NewDriver.main(NewDriver.java:259) [ApacheJMeter.jar:5.6.3]

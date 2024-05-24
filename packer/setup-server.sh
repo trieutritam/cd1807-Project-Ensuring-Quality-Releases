@@ -3,6 +3,9 @@ sudo apt-get update -y
 sudo apt-get install -y openjdk-17-jdk python3-pip unzip chromium-browser
 sudo pip3 install selenium
 
+cp /tmp/setup_devops_agent.sh ~/
+sudo chown $USER:$USER ~/setup_devops_agent.sh
+
 mkdir -p azagent
 cd azagent
 
