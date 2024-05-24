@@ -1,14 +1,7 @@
 #!/bin/bash
 
-# This script require environment variable AZ_DEVOPS_PAT
-
-# Setup Azure DevOps Environment VM
-# mkdir -p azagent;cd azagent
-# curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.238.0/vsts-agent-linux-x64-3.238.0.tar.gz
-# tar -zxvf vstsagent.tar.gz
-
 # add pub key to allow build agent connect
-sudo cat /home/packer/azuredevops_rsa.pub >> ~/.ssh/authorized_keys
+# sudo cat /home/packer/azuredevops_rsa.pub >> ~/.ssh/authorized_keys
 
 if [ -x "$(command -v systemctl)" ]; then 
   ./config.sh --unattended --environment --environmentname "Test" --acceptteeeula --agent $HOSTNAME \
