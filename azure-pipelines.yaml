@@ -245,7 +245,7 @@ stages:
                       mv $BASE/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
                       cd $DIR
                       unzip -o $(Build.BuildId)-uitests.zip
-                      FILE=$BASE/chromedriver-linux64.zip
+                      FILE=$DIR/chromedriver-linux64.zip
                       if [ ! -f "$FILE" ]; then
                           wget -q https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.76/linux64/chromedriver-linux64.zip
                           unzip -o chromedriver-linux64.zip
