@@ -7,4 +7,4 @@ cd  /home/vmuser
 chown vmuser:vmuser ./setup_devops_agent.sh
 
 cd  /home/vmuser/azagent
-sudo -H -u vmuser ../setup_devops_agent.sh
+sudo -H -E -u vmuser ../setup_devops_agent.sh
