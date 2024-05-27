@@ -98,11 +98,13 @@ stages:
                       #! /bin/bash
 
 
-                      sudo apt -y install unzip
+                      sudo apt-get -y install unzip
                       pip install selenium
 
-                      cd ~/
-                      DIR=./app
+                      export BASE=/home/vmuser
+
+                      cd $BASE/
+                      DIR=$BASE/app
                       if [ ! -d "$DIR" ]; then
                           mkdir app
                       fi
@@ -115,7 +117,7 @@ stages:
                           unzip -o chromedriver-linux64.zip
                           sudo ln -s -f $PWD/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
                       fi
-                      export PATH=$PATH:/root/app
+                      export PATH=$PATH:$DIR
                       echo "Starting Selenium Tests"
                       python3 add_remove_from_cart.py > selenium.log
                       echo "Completed Selenium Tests. Check selenium.log for results."
