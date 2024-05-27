@@ -48,13 +48,13 @@ if [[ -n "$IP_ADDRESS" ]]; then
 
       sudo snap install terraform --classic
 
-      sudo reboot
+      # sudo reboot
 ENDSSH
 
   ssh devopsagent@$IP_ADDRESS <<-'ENDSSH'
     #commands to run on remote host
     sudo cp -R /home/vmuser/azagent ~/
-    sudo chown devopsagent:devopsagent azagent
+    sudo chown -R devopsagent:devopsagent azagent
     cd ~/azagent
     ./config.sh --unattended --url https://dev.azure.com/udacitydevops --auth pat --token $PAT --replace --pool myAgentPool --acceptTeeEula 
     sudo ./svc.sh install
