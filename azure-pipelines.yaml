@@ -28,13 +28,13 @@ stages:
       - job: BuildInfrastructure
         steps:
           - task: DownloadSecureFile@1
-            name: id_rsa
+            name: id_rsa2
             displayName: "Download RSA key"
             inputs:
               secureFile: "id_rsa"
 
           - task: DownloadSecureFile@1
-            name: id_rsa_pub
+            name: id_rsa2.pub
             displayName: "Download RSA key"
             inputs:
               secureFile: "id_rsa.pub"

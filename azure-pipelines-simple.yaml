@@ -1,0 +1,121 @@
+name: Azure Pipelines
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger:
+  - main
+
+# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab.
+# Otherwise comment out the line below.
+pool: myAgentPool
+
+variables:
+  - group: PipelineEnv
+  # ToDo: Replace the service connection name as used in the DevOps project settings
+  - name: azureServiceConnectionId
+    value: "myServiceConnection"
+  # Project root folder. Point to the folder containing manage.py file.
+  - name: projectRoot
+    value: $(System.DefaultWorkingDirectory)
+  # Environment name
+  - name: environmentName
+    value: "test"
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildInfrastructure
+        steps:
+          - task: DownloadSecureFile@1
+            name: id_rsa2
+            displayName: "Download RSA key"
+            inputs:
+              secureFile: "id_rsa"
+
+          - task: DownloadSecureFile@1
+            name: id_rsa2.pub
+            displayName: "Download RSA key"
+            inputs:
+              secureFile: "id_rsa.pub"
+
+          - script: |
+              echo Installing $(id_rsa.secureFilePath) to the ssh...
+              sudo cp -f $(id_rsa.secureFilePath) ~/.ssh/
+              echo Installing $(id_rsa_pub.secureFilePath) to the ssh...
+              sudo cp -f $(id_rsa_pub.secureFilePath) ~/.ssh/
+              sudo chown $USER:$USER ~/.ssh/*
+              sudo chmod 600 ~/.ssh/id_rsa
+              sudo chmod 600 ~/.ssh/id_rsa.pub
+              export ARM_ACCESS_KEY=$(az storage account keys list --resource-group Azuredevops --account-name tfstate070119820513  --query '[0].value' -o tsv)
+            displayName: Preparation
+
+          #--------------------------------------------#
+          - task: UseNode@1
+            inputs:
+              version: "20.x"
+            displayName: "Install Node.js"
+
+          #--------------------------------------------#
+          # Selenium (UI) Test Suite - Archive the package
+          # "ArchiveFiles@2" picks up the web package and archives it.
+          - task: ArchiveFiles@2
+            displayName: "Archive UI Tests"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip"
+          # Selenium Test Suite - Publish the package
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip # Same as the archiveFile artifact above.
+            displayName: "Upload Package"
+            artifact: drop-uitests
+
+  #--------------------------------------------#
+  # DEPLOYMENT STAGE
+  #--------------------------------------------#
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - deployment: VMDeploy
+        displayName: Selenium Tests
+        environment:
+          name: test
+          resourceType: VirtualMachine
+          tags: selenium
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: drop-uitests
+
+                - task: Bash@3
+                  displayName: "UI test"
+                  inputs:
+                    targetType: "inline"
+                    script: |
+                      #! /bin/bash
+
+
+                      sudo apt -y install unzip
+                      pip install selenium
+
+                      cd ~/
+                      DIR=./app
+                      if [ ! -d "$DIR" ]; then
+                          mkdir app
+                      fi
+                      mv /usr/local/share/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip $DIR
+                      cd $DIR
+                      unzip -o $(Build.BuildId)-uitests.zip
+                      FILE=./chromedriver_linux64.zip
+                      if [ ! -f "$FILE" ]; then
+                          wget -q https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.76/linux64/chromedriver-linux64.zip
+                          unzip -o chromedriver-linux64.zip
+                          sudo ln -s -f $PWD/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+                      fi
+                      export PATH=$PATH:/root/app
+                      echo "Starting Selenium Tests"
+                      python3 add_remove_from_cart.py > selenium.log
+                      echo "Completed Selenium Tests. Check selenium.log for results."

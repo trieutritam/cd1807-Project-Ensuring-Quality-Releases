@@ -29,7 +29,7 @@ resource "azurerm_linux_virtual_machine" "linux_vm" {
   admin_ssh_key {
     username = "vmuser"
     #Use the actual public key itself when using Terraform in the CI/CD pipeline.
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCDVISFRUvrzI0n8vgB4YCKYvqv6c+kcEo78quaOWj2484aBo0Ualye8m5ZrSv8xzBp97BdvLO2xQ8J1blZgCWw2JeTSaUQ+pyRFtOAUbQYS9pagJdxOh1ia2+h4OrGbAm9SnUn7niNaWxubkonY1pXvtBAvrAlg40kJVkZmkORfwCLo2AMjv+rtcK7LaB0pEqO3uG+y77Of6syH50qlSUI45jdympSlRHh2g4bNnrqcU92P9iAWLH2qo/eVC4sTcI/W946pdIQL82dpSx0WzlJBZ9UZpgOvBnuDMa8AP0PZiyuYJl3WxyZ0t1Ceygzz5wyPmMRkxyOljWQkJBe0sQDx5IW/ZZ+f5ISl/TcL6TjFPxHQWVR711uRQ73fnBUgo2PVLtE4kTPQCv8EeHMlrbUQQLpBRjOQVnPJlIfGZiAqzR2jCrTCJyiWI7SblLdM9OUwWf0bRJFKRqdVbHLPQG5WldPQWB5b8xTlZvtnSeyeeeUwW1BOMjg3orIOFFSitU= tamtt5@LPP00117561C"
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCs0SkXFbV5rIkezrktUJ731XIQJDeiI893h6xC2fcg1RKjToB6fuM5nUzSBzp3ceLj3fmPYAwVL0GxO3V73aEOawSvqolMF+LAkXBNRB8pt0tT41HlgTF5d1IAgINyVQc1dnomC+gn0haZu2moU6YhoHmWlZlL7GabFrd/vXKwfdi8QwykqQc6zq6lt/shN7G+TS0cZjly7RC51wmgscX8yuXUUVfBePlH0GGc1RIdso28uA+h8lxkUkrpjDqVXGZDpbf0nlY4tHRMJe7Fwm83gMLJ++BTsbY+g9MiNbr4Xb9fY4Hy45iowf/2pkfUxTFXHgGCmi7t5UQrrm3vUPkFmww1UHZg8l8zbTdmi/SDaD0LkNGTPl7nPwkx5aYCC4o+23iJLcuTfbhUg5hiThioubtMr1gGKej/qR9D5q2sG4iwuXmc8U8mLScK0rXLAZvj53NaUj8MCg4MzdqVZEmQv+9D9ETzjRb4pz5FDyYXfdnkrdNrJlZMokpDoPXDbQk= tamtt@tamtt-pc"
     # On Azure Pipeline this file will be copy from Secure File
     # public_key = file("~/.ssh/id_rsa.pub")
   }

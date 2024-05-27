@@ -5,6 +5,7 @@ export AZ_DEVOPS_PAT="AZURE_PAT"
 # Execute the file provided by VM Image to register Azure DevOps agent
 cd  /home/vmuser
 chown vmuser:vmuser ./setup_devops_agent.sh
+chmod +x ./setup_devops_agent.sh
 
 cd  /home/vmuser/azagent
 sudo -H -E -u vmuser ../setup_devops_agent.sh

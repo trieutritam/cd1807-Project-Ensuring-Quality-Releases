@@ -29,15 +29,6 @@ IP_ADDRESS=$(echo $IP_ADDRESS | sed -z "s/\r\n//g")
 if [[ -n "$IP_ADDRESS" ]]; then
   echo "VM IP: $IP_ADDRESS"
 
-#   ssh devopsagent@$IP_ADDRESS <<-'ENDSSH'
-#       sudo cp /home/packer/azuredevops_rsa ~/.ssh/id_rsa
-#       sudo cp /home/packer/azuredevops_rsa.pub ~/.ssh/id_rsa.pub
-#       sudo cat /home/packer/azuredevops_rsa.pub >> ~/.ssh/authorized_keys
-#       sudo chown devopsagent:devopsagent ~/.ssh/*
-#       sudo chmod 600 ~/.ssh/id_rsa
-#       sudo chmod 600 ~/.ssh/id_rsa.pub
-# ENDSSH
-
   # Install Docker and restart
   ssh devopsagent@$IP_ADDRESS "echo export PAT=$TF_VAR_azure_devops_pat >> ~/.bashrc"
 
