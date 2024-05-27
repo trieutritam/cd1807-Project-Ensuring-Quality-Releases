@@ -77,6 +77,34 @@ stages:
   - stage: Deploy
     dependsOn: Build
     jobs:
+      - deployment: FakeRestAPI
+        environment:
+          name: test
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: "Deploy Azure Web App"
+                  inputs:
+                    azureSubscription: "$(azureServiceConnectionId)"
+                    appName: "myApplication-AppService"
+                    appType: webApp
+                    package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                #--------------------------------------------#
+                # Run JMeter test suite against the App Service
+                - task: CmdLine@2
+                  displayName: "Performance test"
+                  inputs:
+                    script: |
+                      export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+                      wget -q "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
+                      tar -xf apache-jmeter-5.6.3.tgz
+                      unzip -o $(Build.BuildId)-perftests.zip
+                      rm -Rf test-report
+                      ./apache-jmeter-5.6.3/bin/jmeter -n -t ./PerformanceTestSuite.jmx -l test-report/test-results.jtl -e -o test-report
+                      cat ./jmeter.log
+                    workingDirectory: $(Pipeline.Workspace)/drop-perftests
       - deployment: VMDeploy
         displayName: Selenium Tests
         environment:
