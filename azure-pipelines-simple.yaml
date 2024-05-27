@@ -34,7 +34,7 @@ stages:
               secureFile: "id_rsa"
 
           - task: DownloadSecureFile@1
-            name: id_rsa2.pub
+            name: id_rsa2_pub
             displayName: "Download RSA key"
             inputs:
               secureFile: "id_rsa.pub"
