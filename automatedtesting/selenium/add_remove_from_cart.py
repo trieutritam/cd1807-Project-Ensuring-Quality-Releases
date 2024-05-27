@@ -14,6 +14,9 @@ def login (user, password):
     # Execute Chrome in headless mode
     options = ChromeOptions()
     options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    # options.add_argument("--disable-gpu")
+    options.add_argument("--remote-debugging-port=9230")
     driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome()
     print ('Browser started successfully. Navigating to the demo page to login.')
@@ -33,9 +36,16 @@ def login (user, password):
     return driver
 
 def add_item_to_cart(driver):
+  wait = WebDriverWait(driver, 10)
+
   print('Load inventory page for adding items to cart')
   driver.get('https://www.saucedemo.com/inventory.html')
+
+  wait.until(
+      EC.presence_of_element_located((By.CSS_SELECTOR, ".inventory_list")))
+  
   items = driver.find_elements(By.CSS_SELECTOR, ".inventory_list > div[data-test='inventory-item']")
+
   print("Inventory items: ", len(items))
   assert len(items) > 0, "Inventory items must greater than 0"
   for item in items:
@@ -46,22 +56,37 @@ def add_item_to_cart(driver):
 
   print('Get cart item to verify the item is in the carts')
   driver.get('https://www.saucedemo.com/cart.html')
+
+  wait.until(
+      EC.presence_of_element_located((By.CSS_SELECTOR, "div.cart_list")))
+
   items = driver.find_elements(By.CSS_SELECTOR, "div.cart_item")
+
   item_count = len(items)
   print(f'Verify cart items count should be 6, actual: {item_count}')
   assert item_count == 6
 
 def remove_item_from_cart(driver):
+  wait = WebDriverWait(driver, 10)
+
   print('Load cart page for removing items')
+
   driver.get('https://www.saucedemo.com/cart.html')
+  wait.until(
+      EC.presence_of_element_located((By.CSS_SELECTOR, "div.cart_list")))
+
   items = driver.find_elements(By.CSS_SELECTOR, "div.cart_item")
+
   for item in items:
     label = item.find_element(By.CSS_SELECTOR, ".cart_item_label > a").text
     btn = item.find_element(By.CSS_SELECTOR, "button.cart_button")
     btn.click()
     print('  - Removed item: ' + label)
 
+  wait.until(
+      EC.presence_of_element_located((By.CSS_SELECTOR, "div.cart_list")))
   items = driver.find_elements(By.CSS_SELECTOR, "div.cart_item")
+
   item_count = len(items)
   print(f'Verify cart items count should be 0, actual: {item_count}')
   assert item_count == 0
